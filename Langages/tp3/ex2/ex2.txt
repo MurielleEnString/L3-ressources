@@ -1,0 +1,2 @@
+1. C'est une grammaire de type 0 car c'est l'exception : epsilon n'est pas engendrée par l'axiome
+2. Le mot aabbcc appartient à la grammauire. Il a 51 noeuds

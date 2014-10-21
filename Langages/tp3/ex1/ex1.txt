@@ -1,0 +1,4 @@
+2. L = { a|b }
+3. C'est une grammaire de type 0 car non récursive
+4. Unrestricted Grammar
+5. cf fichier

@@ -1,0 +1,6 @@
+L = { a^n b^m, n >= 0, m > 0 }
+1. a*b+
+2. G = { (a,b), {S, }, S, { S -> Ab | b,
+							A -> Aa | Ab | a | b } }
+3. C'est une grammaire de type 3
+4. C'est correct

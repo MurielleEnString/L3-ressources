@@ -1,0 +1,6 @@
+L = {a^n b^n, n > 0 }
+1. G = { (a,b), {S,A }, S, { S -> aAb | ab } }
+2. C'est une grammaire de type 3
+3. aaabbb fait partie du langage
+4. Le mot aaabbb a 4 noeuds
+5. Les algorithmes proposés sont : Brute Force, Multiple Brute Force, User Control, CYK et Multiple CYK
