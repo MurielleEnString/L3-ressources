@@ -39,7 +39,7 @@ else:	sub $t0, $a0, 1
 	sub $t1, $a0, 2
 	
 	#appel à fibo(n-1)
-	move $a0, $t0
+	move $a0, $t0 #$a0 -> $sp + 24/ $vo -> $sp +20
 	jal fibo
 	move $t2, $v0 #$t2 = fibo(n-1)
 	
