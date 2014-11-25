@@ -1,0 +1,63 @@
+Ex.1
+-------------------
+acceptés : aabb, abb, ab
+rejeté : bbbb
+
+R = a*.b.(bb)*
+
+
+Ex.2
+-------------------
+acceptés : aa, aabb, aaaaa
+rejeté : a
+
+R = a.( (a.(aa)*) | a.a.(aaa)* ).( (bb)* | (bbb)* )
+
+
+Ex.3
+-------------------
+automate brut:
+	- acceptés : ab, abbaabb
+	- rejetés : aaa, abaab
+	
+automate raffiné:
+	- acceptés : ab, abbaabb
+	- rejetés : aaa, abaab
+
+R = (a+.b+).(a* | (a+.b.b+) )*
+
+
+Ex.4
+-------------------
+automate brut:
+	- acceptés : aa, babbaa
+	- rejetés : ab, bab
+	
+automate raffiné:
+	- acceptés : aa, babbaa
+	- rejetés : ab, bab
+
+R = ( (a|b) | (a|b).(b.a*.b) )+.( a+ | a+.b.a+.b.( (a|b) | (a|b).(b.a*.b) )+)
+
+
+Ex.5
+-------------------
+Grammaire :
+	S -> aS
+	C -> bA
+	C -> epsilon
+	A -> bA
+	S -> aA
+	B -> epsilon
+	B -> aC
+	A -> bB
+	C -> B
+
+C'est une grammaire de type 0, à cause de l'exception (epsilon en partie droite d'une règle n'impliquant pas l'axiome)
+
+Pour obtenir une grammaire de type 2, il faudrait corriger la grammaire comme ceci :
+	S -> aS | aA
+	A -> bA | bB
+	B -> aC | a | b
+	C -> bA | B | a
+	
