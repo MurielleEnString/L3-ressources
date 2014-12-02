@@ -1,0 +1,60 @@
+// ------ Prologue C++ ------
+%{
+	#define YYSTYPE int
+	#include <iostream>
+	int yylex(void);
+	void yyerror(char const *);
+	
+%}
+
+// ------ Grammaire ------
+%%
+input:	//
+		| input ligne
+;
+
+ligne:	'\n'
+		| exp '\n' { std::cout << " --> " << $1 << std::endl; }
+;
+
+exp:		terme
+			| nombre
+			| nombre','nombre
+
+nombre:		terme nombre | terme			
+
+terme:		'0' 				
+			| '1' 				
+			| '2' 				
+			| '3' 				
+			| '4' 				
+			| '5' 				
+			| '6' 				
+			| '7' 				
+			| '8' 				
+			| '9'				
+
+		
+// ------ Epilogue C++ ------
+%%
+
+//Appelé par l'analyseur en cas d'erreur
+void yyerror(char const *s) {
+	std::cout << "erreur lors de l'analyse " << s << std::endl;
+}
+
+//Fait une analyse syntaxique caractère par caractère
+int yylex(void) {
+	char c;
+	std::cin >> c;
+	while( c == ' ' || c == '\t' ) {
+		std::cin >> c;
+	}
+	return c;
+}
+
+//Programme principal
+int main(void) {
+	std::cin.unsetf(std::ios_base::skipws);
+	return yyparse();
+}
