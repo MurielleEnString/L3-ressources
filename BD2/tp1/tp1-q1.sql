@@ -11,13 +11,12 @@ WHERE (
 
 /* Question n°2 */
 SELECT *
-FROM Livres
-WHERE ((
-
-		)/(
-			SELECT COUNT(refl)
-			FROM Livres
-		))>= 16;
+FROM Livres NATURAL JOIN Avis
+GROUP BY refl
+HAVING SUM(note)/(
+	SELECT COUNT(refl)
+	FROM Livres
+	) >= 16;
 
 /* Question n°3 */
 SELECT *
