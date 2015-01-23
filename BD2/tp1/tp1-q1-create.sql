@@ -1,4 +1,4 @@
-/*Création des tables*/
+/* Création des tables */
 
 CREATE TABLE Clients (
 	idcl NUMBER PRIMARY KEY NOT NULL,

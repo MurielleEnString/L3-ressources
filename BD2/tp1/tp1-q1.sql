@@ -10,13 +10,10 @@ WHERE (
 		) >= 10000;
 
 /* Question n°2 */
-SELECT *
+SELECT refl, note
 FROM Livres NATURAL JOIN Avis
-GROUP BY refl
-HAVING SUM(note)/(
-	SELECT COUNT(refl)
-	FROM Livres
-	) >= 16;
+GROUP BY refl, note
+HAVING SUM(note)/COUNT(refl) >= 16;
 
 /* Question n°3 */
 SELECT *
