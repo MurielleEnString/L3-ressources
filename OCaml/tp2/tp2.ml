@@ -15,37 +15,44 @@ On réalise les fonctions suivantes :
 #load "nat_1.cmo" ;;
 #install_printer affiche_naturel;;
 
-let rec nat_of_int = function x -> if x = 0
-									then Nat_1.zero()
-									else Nat_1.suc(nat_of_int(x - 1));;
+let rec nat_of_int = function x -> 
+	if x = 0
+		then Nat_1.zero()
+		else Nat_1.suc(nat_of_int(x - 1));;
 
-let rec int_of_nat = function x -> if Nat_1.est_zero(x)
-									then 0
-									else 1 + int_of_nat(Nat_1.pre(x));;
+let rec int_of_nat = function x -> 
+	if Nat_1.est_zero(x)
+		then 0
+		else 1 + int_of_nat(Nat_1.pre(x));;
 
-let rec plus = function (x,y) -> if Nat_1.est_zero(x)
-									then y
-									else plus(Nat_1.pre(x), Nat_1.suc(y));;
+let rec plus = function (x,y) -> 
+	if Nat_1.est_zero(x)
+		then y
+		else plus(Nat_1.pre(x), Nat_1.suc(y));;
 
-let rec fois = function (x,y) -> if Nat_1.est_zero(y)
-									then Nat_1.zero()
-									else plus(x, fois(x, Nat_1.pre(y)));;
+let rec fois = function (x,y) -> 
+	if Nat_1.est_zero(y)
+		then Nat_1.zero()
+		else plus(x, fois(x, Nat_1.pre(y)));;
 
-let rec moins = function (x,y) -> if Nat_1.est_zero(x)
-									then y
-									else if Nat_1.est_zero(y)
-										then x
-										else moins(Nat_1.pre(x), Nat_1.pre(y));; 
+let rec moins = function (x,y) -> 
+	if Nat_1.est_zero(x)
+		then y
+		else if Nat_1.est_zero(y)
+				then x
+				else moins(Nat_1.pre(x), Nat_1.pre(y));; 
 
-let rec supegal = function (x,y) -> if Nat_1.est_zero(x)
-										then false
-										else if Nat_1.est_zero(y)
-											then true
-											else supegal(Nat_1.pre(x), Nat_1.pre(y));;
+let rec supegal = function (x,y) -> 
+	if Nat_1.est_zero(x)
+		then false
+		else if Nat_1.est_zero(y)
+			then true
+			else supegal(Nat_1.pre(x), Nat_1.pre(y));;
 
-let rec string_of_nat = function x -> if Nat_1.est_zero(x)
-										then ""
-										else "| " ^ string_of_nat(Nat_1.pre(x));; 
+let rec string_of_nat = function x -> 
+	if Nat_1.est_zero(x)
+		then ""
+		else "|" ^ string_of_nat(Nat_1.pre(x));; 
 
 (* Avec l'implémentation Nat_2 *)
 #load "nat_2.cmo" ;;
