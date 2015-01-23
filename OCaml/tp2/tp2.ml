@@ -37,6 +37,16 @@ let rec moins = function (x,y) -> if Nat_1.est_zero(x)
 										then x
 										else moins(Nat_1.pre(x), Nat_1.pre(y));; 
 
+let rec supegal = function (x,y) -> if Nat_1.est_zero(x)
+										then false
+										else if Nat_1.est_zero(y)
+											then true
+											else supegal(Nat_1.pre(x), Nat_1.pre(y));;
+
+let rec string_of_nat = function x -> if Nat_1.est_zero(x)
+										then ""
+										else "| " ^ string_of_nat(Nat_1.pre(x));; 
+
 (* Avec l'implémentation Nat_2 *)
 #load "nat_2.cmo" ;;
 #install_printer affiche_naturel;;
