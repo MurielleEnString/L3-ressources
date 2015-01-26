@@ -1,4 +1,5 @@
 /* Création des tables */
+/* Auteur : Thomas Minier, groupe 501A */
 
 CREATE TABLE Clients (
 	idcl NUMBER PRIMARY KEY NOT NULL,
@@ -16,9 +17,10 @@ CREATE TABLE Livres (
 );
 
 CREATE TABLE Achats (
-	idcl NUMBER PRIMARY KEY NOT NULL REFERENCES Clients(idcl),
+	idcl NUMBER NOT NULL REFERENCES Clients(idcl),
 	refl VARCHAR2(10) NOT NULL REFERENCES Livres(refl),
-	dateachat DATE NOT NULL
+	dateachat DATE NOT NULL,
+	PRIMARY KEY(idcl, refl, dateachat)
 );
 
 CREATE TABLE Avis (

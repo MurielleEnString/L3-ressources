@@ -54,7 +54,7 @@ let rec est_puissance_de_deux = function x ->
 		then true
 	else if Nat_1.est_zero(Nat_1.pre(x)) (* Si x est égal à 1 *)
 		then false
-		else est_puissance_de_deux(Nat_1.pre(Nat_1.pre(x)));; (* Appel récusrif sur x - 2 *) 
+		else est_puissance_de_deux(Nat_1.pre(Nat_1.pre(x)));; (* Appel récusrif sur x - 2 *)
 
 let rec string_of_nat = function x -> 
 	if Nat_1.est_zero(x)
