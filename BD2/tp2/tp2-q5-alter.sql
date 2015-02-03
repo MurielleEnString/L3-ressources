@@ -1,4 +1,4 @@
-/* Ajout de l'attribut prix à la relation Achats */
+/* Ajout de l'attribut "prix" à la relation Achats */
 /* Auteur : Thomas Minier, groupe 501A */
 
 ALTER TABLE Achats

@@ -14,7 +14,7 @@ On réalise les fonctions suivantes :
 *)
 
 (* Avec l'implémentation Nat_1 *)
-#load "nat_1.cmo" ;;
+#load "nat_1.cmo";;
 open Nat_1;;
 #install_printer affiche_naturel;;
 
