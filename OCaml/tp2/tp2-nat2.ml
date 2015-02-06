@@ -30,16 +30,56 @@ let rec int_of_nat = function x ->
 		then 0
 		else if est_un(x)
 			then 1
-			else  2 + int_of_nat(prepre(x));;
+			else 2 + int_of_nat(prepre(x));;
+
+let rec plus_un = function x ->
+	if est_zero(x)
+		then un()
+		else if est_un(x)
+			then sucsuc(zero())
+			else sucsuc(plus_un(prepre(x)));;
+
+let rec moins_un = function x ->
+	if est_zero(prepre(x))
+		then un()
+		else if est_un(x)
+			then zero()
+			else sucsuc(moins_un(prepre(x)));;
 
 let rec plus = function (x,y) ->
 	if est_zero(x)
 		then y
-		else est_un(x)
-			then 
+		else if est_un(x)
+			then plus_un(y)
+			else plus(prepre(x), sucsuc(y));;
+
+let rec moins = function (x,y) ->
+	if est_zero(x)
+		then y
+		else if est_un(x)
+			then moins_un(y)
 			else if est_zero(y)
 				then x
-			else if est_un(y)
-				then 
-				else plus(prepre(x), sucsuc(y));;
-	
+				else if est_un(y)
+					then moins_un(x)
+					else moins(prepre(x),prepre(y));;
+
+(* ne marche pas *)
+let rec fois = function (x,y) ->
+	if est_zero(y)
+		then zero()
+		else if est_un(y)
+			then x
+			else plus(x, fois(x, prepre(y)));;
+
+let rec div_deux = function x ->
+	if est_zero(x) || est_un(x)
+		then zero()
+		else plus_un(div_deux(prepre(x)));;
+
+let rec est_pair = function x ->
+	if est_zero(x)
+		then true
+		else if est_un(x)
+			then false
+			else est_pair(prepre(x));;
