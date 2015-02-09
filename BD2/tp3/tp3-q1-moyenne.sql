@@ -1,4 +1,4 @@
-/* TP 3 - préliminaires */
+/* TP 3 - Exercice 1 - question 1 */
 /* Auteur : Thomas Minier, groupe 501A */
 
 -- Ajout de l'attribut note_moy à la table Livres

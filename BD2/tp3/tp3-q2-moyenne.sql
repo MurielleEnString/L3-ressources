@@ -1,11 +1,9 @@
-/* TP 3 - préliminaires */
+/* TP 3 - Exercice 1 - question 2 */
 /* Auteur : Thomas Minier, groupe 501A */
-
-DROP TRIGGER trg_avis;
 
 -- Procédure mettant à jour la moyenne d'un livre donné
 CREATE PROCEDURE maj_moyenne 
-	(id_livre IN VARCHAR2(25)) AS
+	(id_livre IN Livre.refl%type) AS
 	sql_stmt VARCHAR2(400);
 	moyenne NUMBER;
 	nb_livres NUMBER;
@@ -35,11 +33,9 @@ END;
 
 -- Trigger mettant à jour la moyenne d'un livre dès l'ajout d'un nouvel avis
 CREATE OR REPLACE TRIGGER trg_avis
-	AFTER INSERT OR UPDATE ON Avis -- Après l'insertion/modification dans la table Avis
+	BEFORE INSERT OR UPDATE ON Avis -- Après l'insertion/modification dans la table Avis
 	FOR EACH ROW
 BEGIN
 	-- Appel de la procédure sur le livre dont on a ajouté un avis
-	IF INSERTING OR UPDATING THEN	
-		maj_moyenne(:old.refl);
-	END IF;
+	maj_moyenne(:new.refl);
 END;

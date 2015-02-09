@@ -20,14 +20,14 @@ CREATE TABLE compo_parcours (
 );
 
 CREATE TABLE inscrip_parcours (
-	idcl NUMBER NOT NULL,
-	idp VARCHAR2(10) NOT NULL,
+	idcl NUMBER NOT NULL REFERENCES Clients(idcl),
+	idp VARCHAR2(10) NOT NULL REFERENCES Parcours(idp),
 	PRIMARY KEY(idcl, idp)
 );
 
 CREATE TABLE inscrip_evt (
-	idcl NUMBER NOT NULL,
-	idp VARCHAR2(10) NOT NULL,
+	idcl NUMBER NOT NULL REFERENCES Clients(idcl),
+	idp VARCHAR2(10) NOT NULL REFERENCES Parcours(idp),
 	id_evt VARCHAR2(10) NOT NULL,
 	PRIMARY KEY(idcl, idp, id_evt)
 );
