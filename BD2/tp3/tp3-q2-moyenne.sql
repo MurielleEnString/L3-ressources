@@ -2,8 +2,8 @@
 /* Auteur : Thomas Minier, groupe 501A */
 
 -- Procédure mettant à jour la moyenne d'un livre donné
-CREATE PROCEDURE maj_moyenne 
-	(id_livre IN Livre.refl%type) AS
+CREATE OR REPLACE PROCEDURE maj_moyenne 
+	(id_livre IN Livres.refl%type) AS
 	sql_stmt VARCHAR2(400);
 	moyenne NUMBER;
 	nb_livres NUMBER;
@@ -29,13 +29,13 @@ BEGIN
 EXCEPTION
 	WHEN no_livre_found THEN 
 		dbms_output.put_line('Erreur : cet id n est associé à aucun livre');
-END;
+END; /
 
 -- Trigger mettant à jour la moyenne d'un livre dès l'ajout d'un nouvel avis
-CREATE OR REPLACE TRIGGER trg_avis
+CREATE OR REPLACE TRIGGER trg_after_ins_upd_avis_row
 	BEFORE INSERT OR UPDATE ON Avis -- Après l'insertion/modification dans la table Avis
 	FOR EACH ROW
 BEGIN
 	-- Appel de la procédure sur le livre dont on a ajouté un avis
 	maj_moyenne(:new.refl);
-END;
+END; /

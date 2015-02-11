@@ -3,7 +3,7 @@
 
 CREATE OR REPLACE PROCEDURE maj_avis
 	(	id_client IN Clients.idcl%type,
-		ref_livre IN Livre.refl%type,
+		ref_livre IN Livres.refl%type,
 		note In Avis.note%type,
 		commentaire IN Avis.commentaire%type
 	)
@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE maj_avis
 BEGIN
 
 	--Vérification que le client a acheté le livre qu'il commente
-	SELECT COUNT(idcl) into nb_livres, refl
+	SELECT COUNT(idcl) into nb_livres
 	FROM Achats
 	WHERE idcl = id_client AND refl = ref_livre;
 
@@ -23,9 +23,7 @@ BEGIN
 	END IF;
 
 	--Mise à jour de l'avis
-	sql_stmt := 'UPDATE Avis 
-				SET note = :n, commentaire = :c 
-				WHERE idcl = :id_client, refl = :ref_livre';
+	sql_stmt := 'UPDATE Avis SET note = :n , commentaire = :c WHERE idcl = :id_client AND refl = :ref_livre';
 	EXECUTE IMMEDIATE sql_stmt USING note, commentaire, id_client, ref_livre;
 
 EXCEPTION

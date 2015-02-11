@@ -27,7 +27,7 @@ CREATE TABLE inscrip_parcours (
 
 CREATE TABLE inscrip_evt (
 	idcl NUMBER NOT NULL REFERENCES Clients(idcl),
-	idp VARCHAR2(10) NOT NULL REFERENCES Parcours(idp),
-	id_evt VARCHAR2(10) NOT NULL,
+	idp VARCHAR2(10) NOT NULL REFERENCES compo_parcours(idp),
+	id_evt VARCHAR2(10) NOT NULL REFERENCES compo_parcours(id_evt),
 	PRIMARY KEY(idcl, idp, id_evt)
 );
