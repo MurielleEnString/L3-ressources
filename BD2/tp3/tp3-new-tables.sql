@@ -28,6 +28,14 @@ CREATE TABLE inscrip_parcours (
 CREATE TABLE inscrip_evt (
 	idcl NUMBER NOT NULL REFERENCES Clients(idcl),
 	idp VARCHAR2(10) NOT NULL REFERENCES compo_parcours(idp),
-	id_evt VARCHAR2(10) NOT NULL REFERENCES compo_parcours(id_evt),
+	id_evt VARCHAR2(10) NOT NULL,
 	PRIMARY KEY(idcl, idp, id_evt)
+);
+
+-- Insertion de quelques tuples pour tester
+INSERT INTO Parcours VALUES (
+	'L3RE',
+	'Litt',
+	'Roman',
+	date '2014-05-12'
 );
