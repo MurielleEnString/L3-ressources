@@ -18,20 +18,30 @@ On réalise les fonctions suivantes :
 open Nat_2;;
 #install_printer affiche_naturel;;
 
-let rec nat_of_int = function x ->
+let rec nat_of_int x =
 	if x = 0
 		then zero()
 		else if x = 1
 			then un()
 			else sucsuc(nat_of_int(x - 2));;
 
-let rec int_of_nat = function x ->
+let rec int_of_nat x =
 	if est_zero(x)
 		then 0
 		else if est_un(x)
 			then 1
 			else 2 + int_of_nat(prepre(x));;
 
+let rec plus (a,b) = 
+	if 
+
+let rec est_pair x =
+	if est_zero(x)
+		then true
+		else if est_un(x)
+			then false
+			else est_pair(prepre(x));;
+(*
 let rec plus_un = function x ->
 	if est_zero(x)
 		then un()
@@ -64,7 +74,6 @@ let rec moins = function (x,y) ->
 					then moins_un(x)
 					else moins(prepre(x),prepre(y));;
 
-(* ne marche pas *)
 let rec fois = function (x,y) ->
 	if est_zero(y)
 		then zero()
@@ -76,10 +85,4 @@ let rec div_deux = function x ->
 	if est_zero(x) || est_un(x)
 		then zero()
 		else plus_un(div_deux(prepre(x)));;
-
-let rec est_pair = function x ->
-	if est_zero(x)
-		then true
-		else if est_un(x)
-			then false
-			else est_pair(prepre(x));;
+*)
