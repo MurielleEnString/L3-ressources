@@ -30,7 +30,7 @@ let rec ajout_en_fin (x, lx) =
 let rec inverse lx =
 	if tl(lx) = []
 		then hd(lx)
-		else let 
+		else inverse(tl(lx))@[hd(lx)];;
 
 let rec colle (la, lb) =
 	if la = []
