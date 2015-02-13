@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+
+\setlength{\oddsidemargin}{0pt} % Marge gauche sur pages impaires
+\setlength{\evensidemargin}{9pt} % Marge gauche sur pages paires
+\setlength{\marginparwidth}{54pt} % Largeur de note dans la marge
+\setlength{\textwidth}{481pt} % Largeur de la zone de texte (17cm)
+\setlength{\voffset}{-18pt} % Bon pour DOS
+\setlength{\marginparsep}{7pt} % Séparation de la marge
+\setlength{\topmargin}{0pt} % Pas de marge en haut
+\setlength{\headheight}{13pt} % Haut de page
+\setlength{\headsep}{10pt} % Entre le haut de page et le texte
+\setlength{\footskip}{27pt} % Bas de page + séparation
+\setlength{\textheight}{708pt} % Hauteur de la zone de texte (25cm)
+
+\title{Rapport de Réseaux et Télécoms \\ Séance de TP 2}
+\author{Florian Delavernhe et Thomas Minier \\ groupe 501A}
+\date{Jeudi 5 Février 2014}
+
+\begin{document}
+
+\maketitle
+\vspace{5cm}
+\tableofcontents
+\newpage
+
+\section{Mise en place du réseau virtuel}
+
+Le but de cette séance de TP était de nous faire manipuler un réseau local simulé avec l'aide du logiciel Marionnet. Nous avons donc utilisé le logiciel pour créer trois machines virtuelles (respectivement \textbf{m1}, \textbf{m2} et \textbf{m3}) reliées entre elles par un switch via trois câbles (respectivement \textbf{s1}, \textbf{s2} et \textbf{s3}). Puis, nous avons lancé le réseau virtuel, ce qui a ouvert trois terminaux, chacun représentant l'une des machines. Nous avons ouvert, dans chacun de ces terminaux, une session \textit{root}. \\
+
+Ensuite, nous avons utilisé la commande \textbf{ifconfig} pour définir les adresses IP des trois machines, une machine \textbf{mi} ayant pour adresse 192.168.1.i . Il s'agit d'adresses de classe C et donc ayant pour netmask 255.255.255.0, ce dernier n'étant pas précisé dans la commande car optionnel. Nous avons donc utilisé les commandes suivantes :
+\begin{verbatim}
+ifconfig eth0 192.168.1.1
+ifconfig eth0 192.168.1.2
+ifconfig eth0 192.168.1.3
+\end{verbatim}
+On précise que chacune des commandes a été tapé dans le terminal correspondant à la machine dont on veut paramétrer l'adresse IP. \\
+
+Pour finir, nous avons effectuer quelques tests pour vérifier que le réseau fonctionne correctement. Nous avons utilisé la commande \textbf{ping} pour envoyer un message de \textbf{m1} vers \textbf{m2}. Nous avons donc utilisé la commande suivante dans le terminal de \textbf{m1} :
+\begin{verbatim}
+ping -c 1 192.168.1.2
+\end{verbatim}
+Le retour du terminal de \textbf{m1} nous a confirmé que l'autre machine avait bien reçu le message.
+
+Ensuite, nous avons testé la même commande mais en lançant un ping avec un nombre ifni de mlessage. Puis, pendant l'envoi, nous avons débranché le câble entre les deux machines. Le terminal de \textbf{m1} affiche alors le message suivant :
+\begin{verbatim}
+Destination Host Unreachable
+\end{verbatim}
+Puis, nous avons rebranché le câble et tout est revenu à la normale. Ce message d'erreur signifiait que la machine n'arrivait pas à transmettre le message car le destinataire était inaccessible, à cause du câble débranché.
+
+\section{Configuration des noms symboliques}
+
+L'étape suivante à été la moficiation du fichier \textbf{/etc/hosts} pour fédinfir des alias our les adresses IP de nos trois machines. en utilisant l'éditeur Vim, nous avons modifié le fichier comme suit :
+\begin{verbatim}
+127.0.0.1     localhost
+192.168.1.1   m1
+192.168.1.2   m2
+192.168.1.3   m3
+\end{verbatim}
+Nous avons du modifier ce fichier pour chacune des trois machines. Ce système n'est pas pas très pratique lorsque l'on veut configurer un grand réseau, car il faudrait éditer le fichier de configuration de chacune des machines du réseau. Dans ce cas, il est donc préférable de recourir à un service DNS. \\
+
+Pour tester que nos noms symboliques étaient bien fonctionnels, nous avons effectué quelques envoi de messages via la commande \textbf{ping}, comme indiqué dans l'énoncé du TP. Les messages de retour des terminaux nous ont confirmé que tout fonctionnait bien. \newpage
+
+\section{Configuration de la table ARP}
+
+\subsection{Manipulation de la table ARP}
+
+\paragraph{}{
+Nous avons commencé par afficher la table ARP de \textbf{m1}, via la commande \textbf{arp}. Voici le résultat de la commande :
+\begin{verbatim}
+Adress  HWtype  HWaddress          Flags Mask   Iface
+m3      ether   02:04:06:B2:54:51  C            eth0
+m2      ether   02:04:06:1E:26:F9  C            eth0
+\end{verbatim}}
+\paragraph{}{
+On peut y lire, pour chaque entrée :
+\begin{itemize}
+\item \textbf{Adress} : le nom symbolique la machine
+\item \textbf{HWtype} : le type de connexion, içi ethernet
+\item \textbf{HWaddress} : l'adresse MAC
+\item \textbf{Flags Mask} : la classe du netmask, ici C
+\item \textbf{Iface} : l'interface de connexion, ici eth0
+\end{itemize}}
+
+\paragraph{}{
+En ajoutant l'option \textbf{-n} à la commande \textbf{arp}, on affiche les adresses IP des machines à la place de leurs noms symboliques. On peut aussi supprimer une entrée dans la table avec la commande \textbf{arp -d m2} (on supprime ici l'entrée \textbf{m2}). On note cependant qu'il est impossible de vider la table avec une seule commande. En effet, on doit supprimer toutes les entrées une par une.
+} \\
+
+En utilisant la commande \textbf{ifconfig}, qui affiche l'adresse MAC de la machine, nous avons pu vérifier que les adresses de \textbf{m2} et \textbf{m3} dans la table arp de \textbf{m1} sont correctes.
+
+\subsection{Capture de trames ARP}
+
+Nous réalisons ensuite quelques captures de trames en utilisant le logiciel \textbf{wireshark}, qui sera lancé sur \textbf{m2} via le terminal. Nous vidons aussi la table ARP de \textbf{m1} avant de commencer. \\
+
+Nous effectuons une capture rapide de l'activité réseau lors de l'exécution de la commande suivante, lancée depuis le terminal de \textbf{m1} :
+\begin{verbatim}
+ping -c 1 m2
+\end{verbatim}
+\paragraph{}{
+Puis, dans \textbf{wireshark}, nous voyons l'apparition de 4 trames : deux de type \textit{ARP} et deux de type \textit{ICMP}. Nous notons les choses suivantes :
+\begin{itemize}
+\item Les trames de type \textit{ARP} ont un champ \textbf{type} dont la valeur est égale à 0x0806
+\item Les trames de type \textit{ICMP} ont un champ \textbf{type} dont la valeur est égale à 0x0800
+\item Les trames de type \textit{ARP} ont deux niveaux d'encapsulation : \textit{Ethernet II} et \textit{Address Resolution Protocol}.
+\item Les trames de type \textit{ICMP} ont trois niveaux d'encapsulation : \textit{Ethernet II}, \textit{Internet Protocol} et \textit{Internet Control Message Protocol}.
+\end{itemize}}
+
+\newpage
+
+\section{Fragmentation}
+
+Enfin, nous avons pu expérimenter l'envoi de messages entre deux machines en modifiant la valeur du MTU. La taille par défaut étant de 1500, nous avons essayé d'envoyer un message d'exactement 1500 octets de \textbf{m1} vers \textbf{m2} via la commande suivante :
+\begin{verbatim}
+ping -c 1 -s 1500 m2
+\end{verbatim}
+
+Nous constatons avec \textbf{wireshark} que le message est coupé en deux. Le premier morceau pèse 1514 octets, alors que le deuxième pèse 62 octets. Le message à donc été découpé car sa taille excédait la valeur du MTU. \\
+
+Nous définissons ensuite le MTU de \textbf{m1} à 1000 en laissant le MTU de \textbf{m2} à sa valeur par défaut, soit 1500. Nous utilisons pour cela la commande suivante :
+\begin{verbatim}
+ifconfig eth0 mtu 1000
+\end{verbatim}
+Nous essayons ensuite d'envoyer le même message que précédemment. Nous constatons alors que le message est rejeté, car les deux machines n'ont pas le même MTU. La communication n'est donc possible qu'entre machine ayant le même MTU. \\
+
+Puis, nous testons l'envoi d'un message de taille 1200 tout en ayant fixé le MTU des deux machines à 1000. Nous constatons alors que le message a encore été découpé en deux morceaux : un de 1010 octets et un autre de 266 octets. \\
+
+Enfin, nous tentons de provoquer une fragmentation d'un seul message ICMP en 10 fragments. Pour ce faire, nous fixons le MTU des deux machines à 100 et nous envoyons un message de 1000 octets. Nous constatons ensuite dans \textbf{wireshark} que le message a bien été divisé en 10 paquets. \\
+
+Dans chacun d'entre eux, il se trouve dans la trame \textit{Internet Protocol} un attribut \textbf{frgmoffset} qui permet de reconstituer le message d'origine. En effet, cet attribut précise à quel octet du message le début du fragment correspond. Comme chaque fragment est de taille fixe, nous pouvons avec ces informations reconstituer facilement le message d'origine. L'offset commence à 0 et augmente par pas de 80, sauf entre l'avant-dernier et le dernier fragment, où le pas est de 40.
+
+\end{document}
