@@ -18,7 +18,7 @@
 # Déclaration des variables
 
 	var x{H} >= 0 integer;
-	var y{H} >= 0 integer;
+	var y{H} >= 0 integer; # y représente le nombre d'infirmière qui font des heures supp sur la tranche i
 
 # Fonction objectif
 
