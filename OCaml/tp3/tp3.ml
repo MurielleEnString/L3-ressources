@@ -28,8 +28,8 @@ let rec ajout_en_fin (x, lx) =
 		else hd(lx)::ajout_en_fin(x, tl(lx));;
 
 let rec inverse lx =
-	if tl(lx) = []
-		then hd(lx)
+	if lx = []
+		then []
 		else inverse(tl(lx))@[hd(lx)];;
 
 let rec colle (la, lb) =
