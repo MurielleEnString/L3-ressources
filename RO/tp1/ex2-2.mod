@@ -28,7 +28,7 @@
 	
 	s.t. NbMaxInfirmieres : sum{i in H} x[i] <= 80;
 	s.t. MinInfirmieres{i in I} : ( y[i] + x[i] +  x[((i - 2)mod 12) + 1] + x[((i - 4)mod 12) + 1] + x[((i - 5)mod 12) + 1] ) >= mdroite[i];
-	s.t. HeuresSupp{i in I}: 0 <= y[i] <= x[((i + 7)mod 12) + 1];
+	s.t. HeuresSupp{i in I}: y[i] <= x[((i + 7)mod 12) + 1];
 
 # Résolution 
 	solve;
