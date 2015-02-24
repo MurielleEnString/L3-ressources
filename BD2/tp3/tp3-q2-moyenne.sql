@@ -1,5 +1,5 @@
 /* TP 3 - Exercice 1 - question 2 */
-/* Auteur : Thomas Minier, groupe 501A */
+/* Auteur : Thomas Minier, groupe 601A */
 
 -- Procédure mettant à jour la moyenne d'un livre donné
 CREATE OR REPLACE PROCEDURE maj_moyenne 

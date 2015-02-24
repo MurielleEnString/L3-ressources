@@ -1,5 +1,5 @@
 /* TP 3 - Exercice 2 - question 2 */
-/* Auteur : Thomas Minier, groupe 501A */
+/* Auteur : Thomas Minier, groupe 601A */
 
 CREATE OR REPLACE PROCEDURE maj_avis
 	(	id_client IN Clients.idcl%type,

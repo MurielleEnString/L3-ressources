@@ -1,5 +1,5 @@
 /* TP 3 - Exercice 1 - question 1 */
-/* Auteur : Thomas Minier, groupe 501A */
+/* Auteur : Thomas Minier, groupe 601A */
 
 -- Ajout de l'attribut note_moy à la table Livres
 ALTER TABLE Livres

@@ -1,11 +1,11 @@
 /* TP 3 - Exercice 3 - question 1 */
-/* Auteur : Thomas Minier, groupe 501A */
+/* Auteur : Thomas Minier, groupe 601A */
 
 CREATE OR REPLACE PROCEDURE inscription_client
 	(id_client IN Clients.idcl%type,
 	id_parcours IN Parcours.idp%type) AS
 
-	CURSOR c1 IN
+	CURSOR c1 IS
 		SELECT *
 		FROM compo_parcours
 		WHERE idp = id_parcours;

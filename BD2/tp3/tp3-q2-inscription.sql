@@ -1,11 +1,11 @@
 /* TP 3 - Exercice 3 - question 2 */
-/* Auteur : Thomas Minier, groupe 501A */
+/* Auteur : Thomas Minier, groupe 601A */
 
 CREATE OR REPLACE TRIGGER trg_avis_propose_parcours
-	AFTER INSERT IN Achats
+	AFTER INSERT ON Achats
 	FOR EACH ROW
 DECLARE
-	CURSOR c1 IN
+	CURSOR c1 IS
 		SELECT *
 		FROM ( Achats NATURAL JOIN inscrip_parcours ) NATURAL JOIN Parcours
 		WHERE genre IN (
@@ -19,7 +19,7 @@ BEGIN
 
 	-- Affichage des parcours proposés
 	FOR row IN c1 LOOP
-		dbms_output.put_line("Parcours : " || row.intitulep);
+		dbms_output.put_line('Parcours : ' || row.intitulep);
 	END LOOP;
 
 END; /

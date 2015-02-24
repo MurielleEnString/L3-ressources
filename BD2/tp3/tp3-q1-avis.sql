@@ -1,5 +1,5 @@
 /* TP 3 - Exercice 2 - question 1 */
-/* Auteur : Thomas Minier, groupe 501A */
+/* Auteur : Thomas Minier, groupe 601A */
 
 CREATE OR REPLACE TRIGGER trg_after_ins_upd_avis_row
 	BEFORE INSERT OR UPDATE ON Avis
