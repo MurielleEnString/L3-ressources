@@ -1,0 +1,150 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+
+\setlength{\oddsidemargin}{0pt} % Marge gauche sur pages impaires
+\setlength{\evensidemargin}{9pt} % Marge gauche sur pages paires
+\setlength{\marginparwidth}{54pt} % Largeur de note dans la marge
+\setlength{\textwidth}{481pt} % Largeur de la zone de texte (17cm)
+\setlength{\voffset}{-18pt} % Bon pour DOS
+\setlength{\marginparsep}{7pt} % Séparation de la marge
+\setlength{\topmargin}{0pt} % Pas de marge en haut
+\setlength{\headheight}{13pt} % Haut de page
+\setlength{\headsep}{10pt} % Entre le haut de page et le texte
+\setlength{\footskip}{27pt} % Bas de page + séparation
+\setlength{\textheight}{708pt} % Hauteur de la zone de texte (25cm)
+
+\title{Rapport de Réseaux et Télécoms \\ Séance de TP 4}
+\author{Florian Delavernhe et Thomas Minier \\ groupe 601A}
+\date{Jeudi 26 Février 2015}
+
+\begin{document}
+
+\maketitle
+\vspace{5cm}
+\tableofcontents
+\newpage
+
+\section{Mise en place du réseau}
+
+Nous mettons en place un réseau constitué de deux machines, \textbf{m1} et \textbf{m2}, reliée entre elles par un câble \textbf{c1}. Nous configurons ensuite les adresses IP des deux machines, à l'aide des commandes suivantes :
+\begin{verbatim}
+ifconfig eth0 192.168.1.1    (pour m1)
+ifconfig eth0 192.168.1.2    (pour m2)
+\end{verbatim}
+
+Les deux machines sont lancées avec l'OS \textit{Debian}, car l'OS \textit{Pinocchio} cause des soucis plus loin dans le TP. En effet, il est impossible de lancer un serveur Apache avec cet OS.
+
+\section{Étude du protocole UDP}
+
+Dans une première partie, nous vérifions que le port UDP associé au service DNS est bien 53/ Pour cela, nous utilisons la commande \textbf{grep domain /etc/services} dans le terminal de \textbf{m1}. Nous obtenons le résultat suivant :
+\begin{verbatim}
+domain    53/tcp
+domain    53/udp
+\end{verbatim}
+
+Le port associé à UDP est donc bien 53. \\
+
+Ensuite, nous lançons la commande \textbf{nslookup www.google.fr 192.168.1.2} dans le terminal de \textbf{m1} tout en capturant les trames dans \textbf{wireshark}. Nous obtenons le résultat suivant :
+\begin{verbatim}
+No.    Time      Source       Destination    Protocol    Info
+1     0.000000  192.168.1.1  192.168.1.2    DNS         Standard Query A www.google.fr
+1     0.002807  192.168.1.2  192.168.1.1    ICMP        Destination Unreachable (Port Unreachable)
+\end{verbatim}
+
+La première signifie que la machine \textbf{m1} a envoyé sa requête à la machine \textbf{m2} pour accéder à l'adresse \textit{ww.google.fr}. La seconde trame, elle, indique que \textbf{m2} envoie un message à \textbf{m1} pour lui indiquer qu'elle n'arrive pas à accéder à l'adresse demandée. Cela s'explique par le fait qu'il n'y aucun serveur DNS d'actif sur \textbf{m2}.
+\paragraph{}{
+Ensuite, nous imprimons les détails des trames avec \textbf{wireshark} et nous les comparons aux détails de celles de l'énoncé. Nous notons les différences suivantes :
+\begin{itemize}
+\item Dans \textit{User Data Protocol}, le \textit{Checksum} est différent. Dans notre cas, il vaut 0x879f.
+\item Dans \textit{Domain Name System}, le \textit{Transaction ID} est différent. dans notre cas, il vaut 0xc5cf.
+\end{itemize}}
+\paragraph{}{
+ Ces différences s'expliquer par le fait qu'il s'agit dans les deux cas d'identifiants. En effet, le \textit{Checksum} est un nombre qu'on ajoute à un message à transmettre pour permettre au récepteur de vérifier que le message reçu est bien celui qui a été envoyé. Il est donc par définition différent en fonction de la machine d'où le message est envoyé. Même chose pour le \textit{Transaction ID}, qui est l'identifiant de la connexion.
+ 
+ Les autres détails sont identiques car il s'agit des mêmes protocoles et des mêmes requêtes.} \newpage
+
+\section{Étude du protocole TCP}
+
+Nous commençons par vérifier que le numéro de port TCP est associé au service HTTP. Nous tapons dans les commandes \textbf{grep http /etc/services} et \textbf{grep www /etc/services} dans le terminal de \textbf{m1}. Nous obtenons les résultats suivants :
+\begin{verbatim}
+#grep http /etc/services
+www    80/tcp   http
+https  443/tcp
+https  443/udp
+
+#grep www /etc/services
+www   80/tcp    http
+www   80/tcp
+\end{verbatim}
+
+Les numéros de port sont donc bien assignés correctement. \\
+
+Ensuite, nous lançons le serveur HTTP sur \textbf{m2} via la commande suivante :
+\begin{verbatim}
+/etc/init.d/apache2 start
+\end{verbatim}
+
+Puis, tout en capturant les trames avec \textbf{wireshark} sur \textbf{m1}, nous tentons une connexion HTTP, en tapant la commande suivante dans \textbf{m1} :
+\begin{verbatim}
+lynx http://192.168.1.2
+\end{verbatim}
+
+Nous effectuons ensuite une comparaison entre nos trames et celles du sujet. Nous notons les choses suivantes :
+\begin{itemize}
+\item L'ordre des trames est le même.
+\item Les numéros de séquences et d'acquittement sont les mêmes.
+\end{itemize}
+\paragraph{}{
+Nous expliquons ces similarités par le fait que les phases d'ouverture et de fermeture de connexion avec le protocole TCP sont toujours les mêmes.
+
+En effet, les 3 premières trames correspondent à la phase de connexion. \textbf{m1} envoie une demande de connexion, puis \textbf{m2} y répond en envoyant un accusé et en ouvrant de son côté la connexion. \textbf{m1} renvoie alors un accusé pour confirmer l'ouverture de connexion.
+
+Ensuite, les trames 4 à 7 correspondent à la transmission des données de la page web. Dans la trame 4, \textbf{m1} demande à récupérer les données du serveur HTTP, via un message \textit{GET /HTTP/1.0}. Puis, \textbf{m2} répond avec un accusé et envoie ensuite les données via un message \textit{HTTP/1.1 200 OK (text/html)}. Dans la trame 7, \textbf{m1} envoie un accusé pour confirmer la réception des données.
+
+Enfin, les trames 8 à 11 correspondent à la phase de fermeture de connexion.\textbf{m2} commence par demander la fermeture de connexion. \textbf{m1} envoie un accusé à la suite, puis demande lui aussi la fermeture de connexion. \textbf{m2} termine le tout en envoyant un accusé de réception.
+}
+
+\paragraph{}{
+Il y a autant de trames car TCP est un protocole qui utilise beaucoup d'accusés et envoie donc beaucoup de messages. Il pourrait y en avoir plus. Par exemple, la page peut être très lourde et doit alors être envoyée en plusieurs fois. Il peut aussi y avoir des éléments annexes à charger, qui demande d'autres requêtes.
+
+Il ne pourrait pas y en avoir moins, car on n'est dans une configuration minimale.
+
+Un navigateur différent, comme Firefox par exemple, cause l'envoie de plus de messages, et donc plus d'accusés, car il y a des ressources externes (logo, menus, etc) à charger au démarrage.
+} \newpage
+
+Ensuite, nous imprimons le détail de la trame 6 avec \textbf{wireshark} et nous la comparons avec le détail présent sur l'énoncé. Là encore, la seule différence est au niveau du \textit{Checksum}, ce qui coïncide avec nos explications précédentes.
+
+\section{Fiabilité des connexions TCP}
+
+\subsection{Exemple de connexion TCP client-serveur}
+
+Nous essayons ensuite d'établir une connexion TCP client-serveur entre les deux machines. Pour ce faire, nous tapons les commandes suivantes dans les terminaux des deux machines:
+\begin{verbatim}
+netcat -l -p 80            (dans m2)
+lynx http://192.168.1.2    (dans m1)
+\end{verbatim}
+
+La première commande permet à \textbf{m2} d'écouter les connexions sur le port 80. La seconde, elle, établit une connexion de \textbf{m1} vers \textbf{m2}. \\
+
+Nous observons dans le terminal de \textbf{m2} que celui-ci à reçu une connexion sur le port 80 et reçoit bien les messages. Cependant, nous observons aussi qu'il ne répond pas et que \textbf{m1} ne reçoit aucune donnée. Il reste en \textit{Waiting for response} jusqu'à ce qu'on force l'arrêt. Nous observons ensuite, sur le terminal de \textbf{m1} le message suivant :
+\begin{verbatim}
+Alert ! Unable to access document.
+\end{verbatim}
+
+Dans \textbf{wireshark}, nous notons que la commande \textbf{netcat} n'envoie aucun accusé pour le message. La connexion se termine simplement selon la procédure standard.
+
+\subsection{Fiabilité d'une connexion TCP}
+
+Nous utilisons la commande suivante dans le terminal de \textbf{m1}, pour se connecter à \textbf{m2} sur le port 80 et envoyer des messages :
+\begin{verbatim}
+netcat 192.168.1.2 80
+\end{verbatim}
+
+Nous simulons ensuite des dysfonctionnement via \textbf{Marionnet}. Nous augmentons progressivement le taux de pertes des paquets de \textbf{m1} vers \textbf{m2} tout en envoyant des messages entre les deux machines.
+
+Nous notons que les messages prennent significativement plus de temps à arriver passé les 70\% de pertes. Cela s'explique par le fait que si le paquet est perdu, alors il doit être renvoyé jusqu'à ce qu'un accusé confirme la réception.
+
+\end{document}
