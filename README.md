@@ -9,3 +9,6 @@ Matières couvertes
 * Architecture des ordinateurs
 * Langages & automates
 * Programmation fonctionnelle
+* Bases de données 2
+* Recherche opérationnelle
+* Réseaux et télécommunication
