@@ -19,3 +19,14 @@ hs_err_pid*
 
 #Règle pour Gedit
 *~
+
+#Règles pour les archives
+*.zip
+*.tar.gz
+
+#Règle pour les pdf
+*.pdf
+
+#Règle pour IntelliJ
+*.iml
+.idea/
