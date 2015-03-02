@@ -1,5 +1,5 @@
 # Makefile permettant de lancer la résolution
-# des différents problèmes du TP 1
+# des différents problèmes du TP 2
 # Auteur : Thomas Minier, groupe 601A
 
 # Résolution de l'exercice 2-1

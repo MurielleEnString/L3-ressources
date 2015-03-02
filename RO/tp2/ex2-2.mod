@@ -10,29 +10,29 @@
 	set E := 1..tailleE; # ensemble des entrepôts
 
 	param tailleP; # nombre de pourcentages de livraison
-	set P = 1..tailleP; # ensemble des pourcentages de livraison
+	set P := 1..tailleP; # ensemble des pourcentages de livraison
 
-	param cout{tailleE}; # Vecteur des coûts de construction des entrepôts
+	param cout{E}; # Vecteur des coûts de construction des entrepôts
 
-	param capacite{tailleE}; # Vecteur des capacités des entrepôts
+	param capacite{E}; # Vecteur des capacités des entrepôts
 
-	param demande{tailleP}; # Vecteur des demandes des clients
+	param demande{P}; # Vecteur des demandes des clients
 
-	param coutCentrale{tailleE,tailleP}; # Vecteur des demandes d'une centrale par entrepôt
+	param coutCentrale{E,P}; # Vecteur des demandes d'une centrale par entrepôt
 
 # Déclaration des variables
 
-	var b{tailleE} binary;
+	var b{E} binary;
 	var p{E,P} >= 0;
 
 # Fonction objectif
 
-	minimize profit : sum{i in tailleE} cout[i]*b[i] + ( sum{j in tailleP} p[i,j]*coutCentrale[i,j] );
+	minimize profit : sum{i in E}(cout[i]*b[i] + sum{j in P}(p[i,j]*coutCentrale[i,j]));
 
 # Contraintes
 
-	s.t. SousContrA{i in tailleE} : sum{j in tailleP} p[i,j]*demande[j] <= capacite[i]*b[i];
-	s.t. SousContrB{j in tailleP} : sum{in in tailleE} p[i,j] = 1;
+	s.t. SousContrA{i in E} : sum{j in P} p[i,j]*demande[j] <= capacite[i]*b[i];
+	s.t. SousContrB{j in P} : sum{i in E} p[i,j] = 1;
 
 # Résolution 
 	solve;
@@ -40,4 +40,4 @@
 # Affichage des résultats
 	display : b;	# affichage "standard" des variables
 	display : p;
-	display : "objectif : ", sum{i in tailleE} cout[i]*b[i] + ( sum{j in tailleP} p[i,j]*coutCentrale[i,j] );
+	display : "objectif : ", sum{i in E}(cout[i]*b[i] + sum{j in P}(p[i,j]*coutCentrale[i,j]));
