@@ -1,8 +1,9 @@
-(* Réalisations des fonctions sur le type arbin *)
+(* Réalisation des fonctions sur le type arbin *)
 (* Auteur : Thomas Minier, groupe 601A *)
 
 #load "arbin.cmo" ;;
 open Arbin ;;
+open List ;;
 
 (* quelques arbin de test*)
 let x = embranche_bin(0,
