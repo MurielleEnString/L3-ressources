@@ -96,7 +96,7 @@ let list_of_arbin a =
 
 (* fonctions auxiliaires pour arbin_of_list *)
 
-(* donne le couple (la liste entre les indices x et y *, le reste de la liste) *)
+(* donne le couple (la liste entre les indices x et y , le reste de la liste) *)
 let rec sub_list (x, y, lx) = 
 	if lx = []
 		then ([], [])
