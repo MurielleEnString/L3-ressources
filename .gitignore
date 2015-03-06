@@ -16,6 +16,7 @@ hs_err_pid*
 #Règles pour le langage C++
 *.o
 *.exe
+*.out
 
 #Règle pour Gedit
 *~
