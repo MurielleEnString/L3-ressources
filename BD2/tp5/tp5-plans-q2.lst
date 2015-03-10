@@ -1,0 +1,331 @@
+SQL> explain plan for select title
+  2  					from publications1
+  3  					where nb_pages > 20 ;
+					from publications1
+					     *
+ERROR at line 2:
+ORA-01031: insufficient privileges 
+
+
+SQL> select * from table(dbms_xplan.display);
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+Plan hash value: 2140598747                                                     
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+| Id  | Operation                      | Name             | Rows  | Bytes | Cost
+ (%CPU)| Time     |                                                             
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT               |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   1 |  NESTED LOOPS                  |                  |       |       |     
+       |          |                                                             
+                                                                                
+|   2 |   NESTED LOOPS                 |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   3 |    NESTED LOOPS                |                  |     1 |   512 |     
+0   (0)| 00:00:01 |                                                             
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+                                                                                
+|   4 |     NESTED LOOPS               |                  |     1 |   208 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   5 |      INDEX FULL SCAN           | PK_FACT          |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  6 |      INDEX RANGE SCAN          | PK_COLLABORATION |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   7 |     TABLE ACCESS BY INDEX ROWID| PUBLICATIONS     |     1 |   304 |     
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  8 |      INDEX UNIQUE SCAN         | PK_PUBLICATION   |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  9 |    INDEX UNIQUE SCAN           | PK_AUTHOR        |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|* 10 |   TABLE ACCESS BY INDEX ROWID  | AUTHORS          |     1 |    66 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+                                                                                
+Predicate Information (identified by operation id):                             
+---------------------------------------------------                             
+                                                                                
+   6 - access("FACTS"."SQUAD_ID"="COLLABORATIONS"."SQUAD_ID")                   
+   8 - access("PUBLICATIONS"."PUBLICATION_ID"="FACTS"."PUBLICATION_ID")         
+   9 - access("COLLABORATIONS"."AUTHOR_ID"="AUTHORS"."AUTHOR_ID")               
+  10 - filter("AUTHORS"."LAST_NAME"='Rosenthal')                                
+
+25 rows selected.
+
+SQL> explain plan for select title
+  2  					from publications1 natural join facts
+  3  					where date_id = 2008 ;
+					from publications1 natural join facts
+					     *
+ERROR at line 2:
+ORA-01031: insufficient privileges 
+
+
+SQL> select * from table(dbms_xplan.display);
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+Plan hash value: 2140598747                                                     
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+| Id  | Operation                      | Name             | Rows  | Bytes | Cost
+ (%CPU)| Time     |                                                             
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT               |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   1 |  NESTED LOOPS                  |                  |       |       |     
+       |          |                                                             
+                                                                                
+|   2 |   NESTED LOOPS                 |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   3 |    NESTED LOOPS                |                  |     1 |   512 |     
+0   (0)| 00:00:01 |                                                             
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+                                                                                
+|   4 |     NESTED LOOPS               |                  |     1 |   208 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   5 |      INDEX FULL SCAN           | PK_FACT          |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  6 |      INDEX RANGE SCAN          | PK_COLLABORATION |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   7 |     TABLE ACCESS BY INDEX ROWID| PUBLICATIONS     |     1 |   304 |     
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  8 |      INDEX UNIQUE SCAN         | PK_PUBLICATION   |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  9 |    INDEX UNIQUE SCAN           | PK_AUTHOR        |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|* 10 |   TABLE ACCESS BY INDEX ROWID  | AUTHORS          |     1 |    66 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+                                                                                
+Predicate Information (identified by operation id):                             
+---------------------------------------------------                             
+                                                                                
+   6 - access("FACTS"."SQUAD_ID"="COLLABORATIONS"."SQUAD_ID")                   
+   8 - access("PUBLICATIONS"."PUBLICATION_ID"="FACTS"."PUBLICATION_ID")         
+   9 - access("COLLABORATIONS"."AUTHOR_ID"="AUTHORS"."AUTHOR_ID")               
+  10 - filter("AUTHORS"."LAST_NAME"='Rosenthal')                                
+
+25 rows selected.
+
+SQL> explain plan for select title
+  2  					from publications1
+  3  					where publication_id in (select publication_id from facts where date_id = 2008);
+					from publications1
+					     *
+ERROR at line 2:
+ORA-01031: insufficient privileges 
+
+
+SQL> select * from table(dbms_xplan.display);
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+Plan hash value: 2140598747                                                     
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+| Id  | Operation                      | Name             | Rows  | Bytes | Cost
+ (%CPU)| Time     |                                                             
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT               |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   1 |  NESTED LOOPS                  |                  |       |       |     
+       |          |                                                             
+                                                                                
+|   2 |   NESTED LOOPS                 |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   3 |    NESTED LOOPS                |                  |     1 |   512 |     
+0   (0)| 00:00:01 |                                                             
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+                                                                                
+|   4 |     NESTED LOOPS               |                  |     1 |   208 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   5 |      INDEX FULL SCAN           | PK_FACT          |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  6 |      INDEX RANGE SCAN          | PK_COLLABORATION |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   7 |     TABLE ACCESS BY INDEX ROWID| PUBLICATIONS     |     1 |   304 |     
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  8 |      INDEX UNIQUE SCAN         | PK_PUBLICATION   |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  9 |    INDEX UNIQUE SCAN           | PK_AUTHOR        |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|* 10 |   TABLE ACCESS BY INDEX ROWID  | AUTHORS          |     1 |    66 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+                                                                                
+Predicate Information (identified by operation id):                             
+---------------------------------------------------                             
+                                                                                
+   6 - access("FACTS"."SQUAD_ID"="COLLABORATIONS"."SQUAD_ID")                   
+   8 - access("PUBLICATIONS"."PUBLICATION_ID"="FACTS"."PUBLICATION_ID")         
+   9 - access("COLLABORATIONS"."AUTHOR_ID"="AUTHORS"."AUTHOR_ID")               
+  10 - filter("AUTHORS"."LAST_NAME"='Rosenthal')                                
+
+25 rows selected.
+
+SQL> explain plan for select title
+  2  					from publications1 natural join facts natural join collaborations natural join authors
+  3  					where last_name= 'Rosenthal' ;
+					from publications1 natural join facts natural join collaborations natural join authors
+					     *
+ERROR at line 2:
+ORA-01031: insufficient privileges 
+
+
+SQL> select * from table(dbms_xplan.display);
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+Plan hash value: 2140598747                                                     
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+| Id  | Operation                      | Name             | Rows  | Bytes | Cost
+ (%CPU)| Time     |                                                             
+                                                                                
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT               |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   1 |  NESTED LOOPS                  |                  |       |       |     
+       |          |                                                             
+                                                                                
+|   2 |   NESTED LOOPS                 |                  |     1 |   578 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   3 |    NESTED LOOPS                |                  |     1 |   512 |     
+0   (0)| 00:00:01 |                                                             
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+                                                                                
+|   4 |     NESTED LOOPS               |                  |     1 |   208 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   5 |      INDEX FULL SCAN           | PK_FACT          |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  6 |      INDEX RANGE SCAN          | PK_COLLABORATION |     1 |   104 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|   7 |     TABLE ACCESS BY INDEX ROWID| PUBLICATIONS     |     1 |   304 |     
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  8 |      INDEX UNIQUE SCAN         | PK_PUBLICATION   |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|*  9 |    INDEX UNIQUE SCAN           | PK_AUTHOR        |     1 |       |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+|* 10 |   TABLE ACCESS BY INDEX ROWID  | AUTHORS          |     1 |    66 |     
+0   (0)| 00:00:01 |                                                             
+                                                                                
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-------------------                                                             
+                                                                                
+                                                                                
+Predicate Information (identified by operation id):                             
+---------------------------------------------------                             
+                                                                                
+   6 - access("FACTS"."SQUAD_ID"="COLLABORATIONS"."SQUAD_ID")                   
+   8 - access("PUBLICATIONS"."PUBLICATION_ID"="FACTS"."PUBLICATION_ID")         
+   9 - access("COLLABORATIONS"."AUTHOR_ID"="AUTHORS"."AUTHOR_ID")               
+  10 - filter("AUTHORS"."LAST_NAME"='Rosenthal')                                
+
+25 rows selected.

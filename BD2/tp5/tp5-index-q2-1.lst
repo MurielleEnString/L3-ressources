@@ -1,0 +1,53 @@
+SQL> explain plan for select * from avis where note > 10 ;
+
+Explained.
+
+SQL> select * from table(dbms_xplan.display);
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+Plan hash value: 1150706375                                                     
+                                                                                
+--------------------------------------------------------------------------      
+| Id  | Operation         | Name | Rows  | Bytes | Cost (%CPU)| Time     |      
+--------------------------------------------------------------------------      
+|   0 | SELECT STATEMENT  |      |     2 |    62 |     3   (0)| 00:00:01 |      
+|*  1 |  TABLE ACCESS FULL| AVIS |     2 |    62 |     3   (0)| 00:00:01 |      
+--------------------------------------------------------------------------      
+                                                                                
+Predicate Information (identified by operation id):                             
+---------------------------------------------------                             
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+                                                                                
+   1 - filter("NOTE">10)                                                        
+
+13 rows selected.
+
+SQL> explain plan for select * from avis where round(note,2) > 10 ;
+
+Explained.
+
+SQL> select * from table(dbms_xplan.display);
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+Plan hash value: 1150706375                                                     
+                                                                                
+--------------------------------------------------------------------------      
+| Id  | Operation         | Name | Rows  | Bytes | Cost (%CPU)| Time     |      
+--------------------------------------------------------------------------      
+|   0 | SELECT STATEMENT  |      |     1 |    31 |     3   (0)| 00:00:01 |      
+|*  1 |  TABLE ACCESS FULL| AVIS |     1 |    31 |     3   (0)| 00:00:01 |      
+--------------------------------------------------------------------------      
+                                                                                
+Predicate Information (identified by operation id):                             
+---------------------------------------------------                             
+
+PLAN_TABLE_OUTPUT                                                               
+--------------------------------------------------------------------------------
+                                                                                
+   1 - filter(ROUND("NOTE",2)>10)                                               
+
+13 rows selected.
