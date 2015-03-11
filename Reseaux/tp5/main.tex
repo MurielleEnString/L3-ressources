@@ -1,0 +1,203 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+
+\setlength{\oddsidemargin}{0pt} % Marge gauche sur pages impaires
+\setlength{\evensidemargin}{9pt} % Marge gauche sur pages paires
+\setlength{\marginparwidth}{54pt} % Largeur de note dans la marge
+\setlength{\textwidth}{481pt} % Largeur de la zone de texte (17cm)
+\setlength{\voffset}{-18pt} % Bon pour DOS
+\setlength{\marginparsep}{7pt} % Séparation de la marge
+\setlength{\topmargin}{0pt} % Pas de marge en haut
+\setlength{\headheight}{13pt} % Haut de page
+\setlength{\headsep}{10pt} % Entre le haut de page et le texte
+\setlength{\footskip}{27pt} % Bas de page + séparation
+\setlength{\textheight}{708pt} % Hauteur de la zone de texte (25cm)
+
+\title{Rapport de Réseaux et Télécoms \\ Séance de TP 5}
+\author{Florian Delavernhe et Thomas Minier \\ groupe 601A}
+\date{Jeudi 12 Mars 2015}
+
+\begin{document}
+
+\maketitle
+\vspace{5cm}
+\tableofcontents
+\newpage
+
+\section{Partie 1 : Segmentation d'une plage réseau}
+
+\subsection{Création et configuration des sous-réseaux}
+
+\subsubsection{Création de LAN1 et LAN2}
+
+Nous commençons par mettre en place les 6 machines, de \textbf{m1} à \textbf{m6}, réparties dans deux sous-réseaux : \textit{LAN1} = \{\textbf{m1},\textbf{m3},\textbf{m6}\} et \textit{LAN2} = \{\textbf{m2},\textbf{m4},\textbf{m5}\}. \\
+\paragraph{}{
+Nous attribuons ensuite les adresses des différentes machines. Pour ce faire, nous calculons les adresses des deux sous-réseaux.
+
+La plage d'adresses réseaux est 194.85.40.0/21 . Le netmask est donc de 255.255.248.0 . Pour créer deux réseaux d'égales capacités, nous avons besoin d'un bit supplémentaire pour faire la différence entre les deux. Nous utiliserons le premier bit de poids fort disponible, c'est à dire le 5ème du 3ème octet. Nous attribuons donc à \textit{LAN1} l'adresse 194.85.40.0/22 et à \textit{LAN2} l'adresse 194.85.44.0/22 .
+
+De plus, nous attribuons les adresses suivantes aux différentes machines, en utilisant la commande \textbf{ifconfig} :
+\begin{itemize}
+\item[\textbf{m1}] 194.85.40.1/22
+\item[\textbf{m2}] 194.85.44.2/22
+\item[\textbf{m3}] 194.85.40.3/22
+\item[\textbf{m4}] 194.85.44.4/22
+\item[\textbf{m5}] 194.85.40.5/22
+\item[\textbf{m6}] 194.85.44.6/22
+\end{itemize}}
+
+\subsubsection{Création de LAN3}
+
+Nous cherchons à affecter plusieurs adresses IP à une même carte réseau, afin de créer un troisième sous-réseau \textit{LAN3} = \{\textbf{m5},\textbf{m6}\} . Pour ce faire, nous utilisons les commandes suivantes :
+\begin{verbatim}
+ifconfig eth0:lan3 10.10.10.5    (pour m5)
+ifconfig eth0:lan3 10.10.10.6    (pour m6)
+\end{verbatim}
+
+Nous avons ensuite effectué quelques pings pour tester la bonne configuration des différentes sous-réseaux. Tout fonctionne bien.
+
+\subsection{Polarité MDI/MDI-X}
+
+Pour effectuer ce test, nous lançons tout d'abord un ping en boucle entre les machines \textbf{m1} et \textbf{m3}. Puis nous remplaçons le câble croisé reliant le commutateur \textbf{s1}, auquel est relié \textbf{m1}, au commutateur \textbf{s2}, auquel est relié \textbf{m3}, par un câble droit. Nous constatons alors l'apparition d'un message d'erreur dans le terminal de \textbf{m1} :
+\begin{verbatim}
+64 bytes from 194.85.40.1: Destination Host Unreachable
+\end{verbatim}
+
+Les connections MDI-à-MDI et MDIX-à-MDIX utilisent des câbles croisés, alors que les connections MDI-à-MDIX utilisent des câbles droits, le MDI étant côté machine et le MDIX étant côté routeur. Cela explique les erreurs.
+
+\newpage
+
+\subsection{Non étanchéité du réseau}
+
+\subsubsection{Broadcast ARP}
+
+Nous provoquons un broadcast ARP sur le réseau \textit{LAN1}. Pour ce faire, nous calculons l'adresse de broadcast : nous prenons les bits inutilisés par le netmask du sous-réseau et on les met tous à 1, ce qui correspond à la dernière adresse possible sur ce sous-réseau. Cela correspond à l'adresse 194.85.43.255/22 . Nous utilisons ensuite la commande suivante pour ping le broadcast :
+\begin{verbatim}
+ping 194.85.43.255/22
+\end{verbatim}
+
+Nous lançons dans le même temps un \textbf{tcpdump} sur le terminal de \textbf{m4}, pour observer l'activté sur le sous-réseau \textit{LAN2}. Nous constatons alors que, malgré le fait que nous envoyons un ping sur \textit{LAN1}, il est quand même possible d'observer le ping sur \textit{LAN2}. Les sous-réseaux ne sont donc pas étanches.
+
+\subsubsection{Broadcast DHCP}
+
+Un serveur DHCP est une machine qui s'occupe d'attribuer les adresses IP aux autres machines du sous-réseau sans adresse IP. Pour ce faire, elle lit dans un fichier de configuration(\textbf{/etc/dhcpd.conf}) la plage d'adresses IP qui peuvent attribuées sur ce réseau. Elle prend la dernière adresse qu'elle peut attribuer et décrémente l'une des suites de bits qui n'est pas réservée par le netmask. Par exemple, pour l'adresse 192.85.43.254, elle décrémente soit 43 soit 254. L'adresse ainsi obtenue est celle qui sera délivrée à la machine réclamant une adresse IP au serveur. \\
+
+Nous mettons donc en place deux serveurs DHCP : \textbf{m1} pour \textit{LAN1} et \textbf{m2} pour \textit{LAN2}. Nous éditons donc leurs fichiers de configuration.
+
+Nous commençons par commenter la ligne \textit{deny unknow-clients} et par décommenter la ligne \textit{allow unknow-clients}. Cela permettra aux machines d'accepter les requêtes de machines inconnues. Ensuite, nous configurons la plage d'adresses qui peuvent être attribuées par chacun des deux serveurs :
+\begin{verbatim}
+#pour m1
+subnet 194.85.40.0 netmask 255.255.252.0 {
+  range 194.85.40.7 194.43.254;
+}
+ddns-update-style none;
+
+#pour m2
+subnet 194.85.44.0 netmask 255.255.252.0 {
+  range 194.85.44.6 194.47.254;
+}
+ddns-update-style none;
+\end{verbatim}
+
+Nous faisons commencer les plages d'addresses à ces IP précises car il y a déjà des machines ayant une adresse sur le réseau. Cela permettra d'éviter les conflits dans le futur. \newpage
+
+Ensuite, nous lançons les deux serveurs DHCP, à l'aide de la commande suivante :
+\begin{verbatim}
+#dans le terminal de m1
+/etc/init.d/dchpd start
+
+#dans le terminal de m2
+/etc/init.d/dchpd start
+\end{verbatim}
+
+Nous ajoutons ensuite trois nouvelles machines : \textbf{m7} branchée à \textbf{s1}, \textbf{m8} branchée à \textbf{s2} et \textbf{m9} branchée à \textbf{s3}. Puis, nous lançons la commande suivante dans chacun des trois nouveaux terminaux, pour demander une adresse IP au serveur DHCP :
+\begin{verbatim}
+dhclient eth0
+\end{verbatim}
+
+Nous constatons que les deux serveurs DHCP font la course pour attribuer les adresses IP. Ainsi, les machines se retouvent avec des adresses appartenant à \textit{LAN1} ou \textit{LAN2} en fonction du serveur qui a été le plus rapide pour délivrer l'adresse IP. En effet, les communuateurs ne savent pas sur quel port est branché quelle machine et envoie donc les requêtes à tous ses ports, et donc aux deux serveurs.
+
+\section{Partie 2 : Partionnement d'un commutateur}
+
+\subsection{Câblage et configuration de base}
+\paragraph{}{
+Nous créons six machines, de \textbf{m1} à \textbf{m6}, toutes reliées à un commutateur \textbf{s1}, la machine \textit{$m_i$} étant reliée au port \textit{$p_i$}. 
+
+Pour attribuer les adresses IP, nous utilisons la même méthode que précédemment. La nouvelle adresse du réseau étant 195.12.56.0/21, nous définissons deux sous-réseaux aux adresses 195.12.56.0/22 pour \textit{LAN1} et 195.12.60.0/22 pour \textit{LAN2}. Les machines aux numéros impairs seront associées à \textit{LAN1} et celles aux numéros pairs seront associées à \textit{LAN2}. Elles auront donc les adresses suivantes, configurées avec la commande \textbf{ifconfig} :
+\begin{itemize}
+\item[\textbf{m1}] 195.12.56.1/22
+\item[\textbf{m2}] 195.12.60.2/22
+\item[\textbf{m3}] 195.12.56.3/22
+\item[\textbf{m4}] 195.12.60.4/22
+\item[\textbf{m5}] 195.12.56.5/22
+\item[\textbf{m6}] 195.12.60.6/22
+\end{itemize}}
+
+\subsection{Configuration des serveurs DHCP et test de l'étanchéité}
+
+Nous configurons ensuite deux serveurs DHCP : un sur \textbf{m1} qui servira les adresses IP pour \textit{LAN1}, et un sur \textbf{m2} qui servira les adresses IP pour \textit{LAN2}. \\
+
+Dans le fichier de configuration des deux machines, (\textbf{/etc/dhcpd.conf}), nous appliquons les mêmes modifications que précédemment, avec les valeurs suivantes pour le subnet :
+\begin{verbatim}
+#pour m1
+subnet 195.12.56.0 netmask 255.255.252.0 {
+  range 195.12.56.6 195.12.59.254;
+}
+ddns-update-style none;
+
+#pour m2
+subnet 195.12.60.0 netmask 255.255.252.0 {
+  range 195.12.60.7 195.12.63.254;
+}
+ddns-update-style none;
+\end{verbatim} \newpage
+
+Nous lançons ensuite les deux serveurs avec la commande \textbf{/etc/init.d/dhcpd start}. Pour tester le bon fonctionnement des serveurs et l'étanchéité des deux sous-réseaux, nous ajoutons deux machines \textbf{m7} et \textbf{m8}, puis nous utilisons la commande \textbf{dhclient eth0} dans leurs terminaux pour qu'elles obtiennent leurs adresses IP. 
+
+Nous constatons que \textbf{m7} obtient l'adresse 195.12.63.254 et que \textbf{m8} obtient l'adresse 195.12.62.255. Ces deux adresses appartiennent à \textit{LAN2}, mais nous avons constater que les DHCPOFFER affichées sur chaques terminaux proviennent à la fois de \textbf{m1} et de \textbf{m2}. Les deux serveurs font donc la course pour servir les adresses IP, ce qui prouve la non-étanchéité des sous-réseaux.
+
+Nous testons aussi la non-étanchéité du réseau avec un broadcast ARP. Pour ce faire, nous envoyons un ping depuis \textbf{m1} sur l'adresse 195.12.56.250, c'est à dire une adresse non attribuée de \textit{LAN1}. En même temps, nous lançons un \textbf{tcpdump} sur \textbf{m4} et nous observons que le broadcast sur \textit{LAN1} est visible depuis \textit{LAN2}. Le réseau n'est donc pas étanche.
+
+\subsection{Configuration des VLANs}
+
+Il existe plusieurs VLANs, de trois types différents. Ceux que nous allons manipuler sont de type 1 et affectent les ports d'un commutateur. Ils permettent de créer des sous-réseaux virtuels au niveau du commutateur afin d'assurer l'étanchéité des différents sous-réseaux.
+
+Par défaut, tous les ports sont associés au VLAN 0. Nous ne pourrons donc pas créer de VLAN 0, car ce numéro est réservé. Nous créons donc deux VLANs, respectivement \textit{VLAN1} pour \textit{LAN1} et \textit{VLAN2} pour \textit{LAN2}, à l'aide des commandes suivantes :
+\begin{verbatim}
+vlan/create 1
+vlan/create 2
+\end{verbatim}
+
+Nous associons ensuite les différents ports aux différentes VLANs. Une machine $m_i$ est relié au port $p_i$. La répartition des ports dans les VLANs sera donc la même que celle des machines dans les sous-réseaux. Nous utilisons les commandes suivantes :
+\begin{verbatim}
+#pour VLAN1
+port/setvlan 1 1
+port/setvlan 3 1
+port/setvlan 5 1
+
+#pour VLAN2
+port/setvlan 2 2
+port/setvlan 4 2
+port/setvlan 6 2
+\end{verbatim}
+
+Le premier paramètre de la commande correspond au numéro du port et le deuxième au numéro du VLAN auquel associer le port. \\
+
+Comme précédemment, nous testons l'étanchéité des sous-réseaux en ajoutant deux machines \textbf{m7} et \textbf{m8}, reliées aux ports 7 et 8 respectivement. Nous configurons ensuite les VLANs pour associer le port 7 à \textit{VLAN1} et le port 8 à \textit{VLAN2} en utilisant les commandes suivantes :
+\begin{verbatim}
+port/setvlan 7 1
+port/setvlan 8 2
+\end{verbatim} \newpage
+
+Nous effectuons ensuite les requêtes auprès du serveur DHCP comme précédemment, pour associer aux deux nouvelles machines une IP. Nous notons que cette fois, \textbf{m7} se voit attribuer une adresse de \textit{LAN1} et que \textbf{m8} se voit attribuer une adresse de \textit{LAN2}. Nous voyons aussi, avec DHCPOFFER, qu'un seul serveur est sollicité par requête. Les sous-réseaux semblent donc étanches.
+
+Nous testons aussi l'étanchéité avec un broadcast ARP, comme précédemment. Les résultats nous confirme bien l'étanchéité.
+
+\subsection{Remarques sur les VLANs}
+
+Les VLANs nous permettent donc de créer des sous-réseaux étanches. Nous avons remarqué qu'il y a 9999 valeurs possibles pour créer des VLANs avec les commutateurs à notre disposition. Le plus grand nombre possible de VLANs est 4094 en utilisant la norme IEEE 802.14, et ce chiffre monte jusqu'à 16 millions environ avec la norme Shortest Path Bridging.
+
+\end{document}
