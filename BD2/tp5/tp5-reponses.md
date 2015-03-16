@@ -17,7 +17,13 @@ Q1. Pour chaque table :
 * squads : La clé primaire est {SQUAD_ID} et il n'y a pas de clé étrangère. Il est possible d'effectuer une jointure avec les tables facts et collaborations.
 * suport : La clé primaire est {SUPPORT_ID} et il n'y a pas de clé étrangère. Il est possible d'effectuer une jointure avec la table facts.
 
-Q2. En l'état, les tables telles qu'elles nous ont été fournies sont vides. Elles contiennent donc toutes 0 lignes.
+Q2. Les tables contiennent le nombre de lignes suivantes :
+* collaborations : 1 212 896
+* dates : 407
+* publications 481 659
+* squads : 479 540
+* supports : 11 243
+* facts : 473 176
 
 Visualisation du plan d'exécution d'une requête
 --------
@@ -27,6 +33,7 @@ Q1. Les différentes requêtes sont détaillées dans le fichier tp5-plans-q1.sq
 
 	On note que, pour chaque plan, Oracle nous fournit les différentes opérations qu'il compte exécuter, 
 	dans quel ordre il va les exécuter, les tables ciblées, le nombre de colonnes concernées et le coût en CPU et en temps.
+	Les plans d'exécution se lisent du bas vers le haut, en terminant par l'opération n°0
 
 	On note que les plans des requêtes R2 et R3 comptent autant d'étapes.
 
@@ -51,7 +58,7 @@ Q1.	Il n'y a aucun index défini sur les différentes tables de la base. Cela ex
 Q2.	
 
 	1 - Les différentes requêtes sont détaillées dans le fichier tp5-index-q2-1.sql
-		Les plans d'éxcution des différentes requêtes se trouvent dans le fichier tp5-index-q2-1.lst
+		Les plans d'éxécution des différentes requêtes se trouvent dans le fichier tp5-index-q2-1.lst
 
 	2 - On crée un index sur une clé primaire de la table avis, soit l'attribut idcl
 		Les commandes se trouvent dans le fichier tp5-index-q2-2.sql
